@@ -2,20 +2,110 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Redirecting to Telegram...</title>
-    <meta http-equiv="refresh" content="0;url=https://t.me/ntumatchadev_bot?start=verified">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verified - NTUMatch</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 20px;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        .loading {
+            font-size: 3rem;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+        .success {
+            color: #10b981;
+            font-size: 3rem;
+        }
+        .error {
+            color: #ef4444;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <div id="status">
+            <div class="loading">⏳</div>
+            <h2>Verifying your email...</h2>
+            <p>Please wait</p>
+        </div>
+    </div>
+
     <script>
         // Extract token from URL hash
         const hash = window.location.hash.substring(1);
         const params = new URLSearchParams(hash);
         const accessToken = params.get('access_token');
+        const refreshToken = params.get('refresh_token');
         
-        // Redirect to Telegram with deep link
-        window.location.href = 'https://t.me/ntumatchadev_bot?start=verified';
+        // Your backend API endpoint
+        const BACKEND_URL = 'https://your-backend-url.com/api/verify-email';
+        
+        async function verifyEmail() {
+            try {
+                if (!accessToken) {
+                    throw new Error('No access token found');
+                }
+                
+                // Send token to your backend
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        access_token: accessToken,
+                        refresh_token: refreshToken
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Success!
+                    document.getElementById('status').innerHTML = `
+                        <div class="success">✅</div>
+                        <h2>Email Verified!</h2>
+                        <p>Redirecting to Telegram...</p>
+                    `;
+                    
+                    // Redirect to Telegram after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'https://t.me/ntumatchadev_bot';
+                    }, 2000);
+                } else {
+                    throw new Error(data.message || 'Verification failed');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('status').innerHTML = `
+                    <div class="error">❌</div>
+                    <h2>Verification Error</h2>
+                    <p>${error.message}</p>
+                    <p>Please return to Telegram and type /start</p>
+                    <a href="https://t.me/ntumatchadev_bot">Open Telegram Bot</a>
+                `;
+            }
+        }
+        
+        // Run verification
+        verifyEmail();
     </script>
-    <p>Redirecting you back to Telegram...</p>
-    <p>If you're not redirected automatically, <a href="https://t.me/ntumatchadev_bot?start=verified">click here</a>.</p>
 </body>
 </html>
