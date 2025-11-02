@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting to Telegram...</title>
+    <meta http-equiv="refresh" content="0;url=https://t.me/ntumatchadev_bot?start=verified">
+</head>
+<body>
+    <script>
+        // Extract token from URL hash
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const accessToken = params.get('access_token');
+        
+        // Redirect to Telegram with deep link
+        window.location.href = 'https://t.me/ntumatchadev_bot?start=verified';
+    </script>
+    <p>Redirecting you back to Telegram...</p>
+    <p>If you're not redirected automatically, <a href="https://t.me/ntumatchadev_bot?start=verified">click here</a>.</p>
+</body>
+</html>
