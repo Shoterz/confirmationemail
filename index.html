@@ -101,7 +101,7 @@
         </div>
     </div>
 
-    <script>
+    <!-- <script>
         // Configuration
         const BACKEND_URL = 'http://localhost:8000/api/verify-email'; // Update if needed
         const BOT_USERNAME = 'ntumatchadev_bot';
@@ -176,6 +176,55 @@
         }
         
         // Run verification on page load
+        verifyEmail();
+    </script> -->
+    <script>
+        // Extract token from URL path
+        // URL: verification.unimatchafriend.com/verify/abc123xyz
+        const pathParts = window.location.pathname.split('/');
+        const token = pathParts[pathParts.length - 1];
+
+        // Verify the token
+        async function verifyEmail() {
+            if (!token || token === 'verify' || token === '') {
+                showError('No verification token found in URL');
+                return;
+            }
+
+            try {
+                const response = await fetch('https://api.unimatchafriend.com/webhooks/auth-events', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ token: token })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.status === 'success') {
+                    showSuccess();
+                } else {
+                    showError(data.message || 'Verification failed');
+                }
+            } catch (error) {
+                console.error('Verification error:', error);
+                showError('Network error. Please try again.');
+            }
+        }
+
+        function showSuccess() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('success').style.display = 'block';
+        }
+
+        function showError(message) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error-message').textContent = message;
+        }
+
+        // Auto-verify when page loads
         verifyEmail();
     </script>
 </body>
