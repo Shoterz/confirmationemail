@@ -189,11 +189,16 @@
                 document.getElementById('status').innerHTML = '❌ Invalid verification link';
             } else {
                 // Send to backend
-                fetch('https://your-backend.com/api/verify-email', {
+                fetch('https://unimatchafriend.com/api/verify-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: token })
                 })
+
+            // Wait exactly 3 seconds, then show success
+            setTimeout(() => {
+                showSuccess();
+            }, 3000);
 
             //     const data = await response.json();
 
@@ -208,9 +213,33 @@
             // }
         }
 
+        // Show success screen with countdown
         function showSuccess() {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('success').style.display = 'block';
+            document.getElementById('status').innerHTML = `
+                <div class="icon success">✅</div>
+                <h1>Email Verified!</h1>
+                <p>Your NTU email has been successfully verified.</p>
+                <p>Redirecting in <span class="countdown" id="countdown">3</span> seconds...</p>
+                <a href="https://t.me/${BOT_USERNAME}" class="button">
+                    Open Telegram Now
+                </a>
+            `;
+            
+            // Countdown and redirect
+            let seconds = 3;
+            const countdownElement = document.getElementById('countdown');
+            
+            const interval = setInterval(() => {
+                seconds--;
+                if (countdownElement) {
+                    countdownElement.textContent = seconds;
+                }
+                
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                    window.location.href = `https://t.me/${BOT_USERNAME}`;
+                }
+            }, 1000);
         }
 
         function showError(message) {
