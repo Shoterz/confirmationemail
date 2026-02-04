@@ -185,9 +185,9 @@
         const BACKEND_URL = 'https://api.unimatchafriend.com/api/verify-email';
         const BOT_USERNAME = 'ntumatchadev_bot'; // Update with your bot username
         
-        // URL: api.unimatchafriend.com/api/verify-email/token_here
-        const pathSegments = window.location.pathname.split('/');
-        const token = pathSegments[pathSegments.length - 1]; // Gets the last segment
+        // URL: verification.unimatchafriend.com/?token=token_here
+        const params = new URLSearchParams(window.location.search);
+        const token = params.get('token');
         
         // Show success screen with countdown
         function showSuccess() {
