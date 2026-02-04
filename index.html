@@ -189,7 +189,7 @@
                 document.getElementById('status').innerHTML = '❌ Invalid verification link';
             } else {
                 // Send to backend
-                fetch('https://unimatchafriend.com/api/verify-email', {
+                fetch('https://verification.unimatchafriend.com/api/verify-email', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ token: token })
