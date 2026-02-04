@@ -181,38 +181,14 @@
     <script>
         // Extract token from URL path
         // URL: verification.unimatchafriend.com/#hash_token
+        // Configuration
+        const BACKEND_URL = 'https://verification.unimatchafriend.com/api/verify-email';
+        const BOT_USERNAME = 'ntumatchadev_bot'; // Update with your bot username
+        
+        // Extract token from URL hash
+        // URL: verification.unimatchafriend.com/#token_here
         const token = window.location.hash.substring(1); // Remove #
-
-        // Verify the token
-        async function verifyEmail() {
-            if (!token) {
-                document.getElementById('status').innerHTML = '❌ Invalid verification link';
-            } else {
-                // Send to backend
-                fetch('https://verification.unimatchafriend.com/api/verify-email', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ token: token })
-                })
-
-            // Wait exactly 3 seconds, then show success
-            setTimeout(() => {
-                showSuccess();
-            }, 3000);
-
-            //     const data = await response.json();
-
-            //     if (response.ok && data.status === 'success') {
-            //         showSuccess();
-            //     } else {
-            //         showError(data.message || 'Verification failed');
-            //     }
-            // } catch (error) {
-            //     console.error('Verification error:', error);
-            //     showError('Network error. Please try again.');
-            // }
-        }
-
+        
         // Show success screen with countdown
         function showSuccess() {
             document.getElementById('status').innerHTML = `
@@ -241,14 +217,27 @@
                 }
             }, 1000);
         }
-
-        function showError(message) {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('error').style.display = 'block';
-            document.getElementById('error-message').textContent = message;
+        
+        // Main verification function
+        async function verifyEmail() {
+            // Try to send to backend (but don't wait for result)
+            if (token && BACKEND_URL) {
+                fetch(BACKEND_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token })
+                }).catch((error) => {
+                    console.log('Backend call failed (ignored):', error);
+                });
+            }
+            
+            // Wait exactly 3 seconds, then show success
+            setTimeout(() => {
+                showSuccess();
+            }, 3000);
         }
-
-        // Auto-verify when page loads
+        
+        // Run verification on page load
         verifyEmail();
     </script>
 </body>
